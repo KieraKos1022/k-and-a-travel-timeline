@@ -133,16 +133,32 @@ const Index = () => {
         <section className="mb-20">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold text-foreground mb-4">How to reach us</h2>
-            <div className="max-w-2xl mx-auto">
-              <p className="text-xl text-muted-foreground mb-6">
-                For any packages, please send them to our package storage facility- we'll pick them up the next time we're in Houston!
-              </p>
-              <div className="bg-card p-6 rounded-lg border shadow-soft">
-                <p className="text-lg font-medium text-foreground">
-                  Kiera Kosciolek VRO4109<br />
-                  3426 Yale St.<br />
-                  Houston, TX, 77018
+            <div className="max-w-2xl mx-auto space-y-8">
+              <div>
+                <p className="text-xl text-muted-foreground mb-6">
+                  For any packages, please send them to our package storage facility- we'll pick them up the next time we're in Houston!
                 </p>
+                <div className="bg-card p-6 rounded-lg border shadow-soft">
+                  <p className="text-lg font-medium text-foreground">
+                    Kiera Kosciolek<br />
+                    VRO4109<br />
+                    3426 Yale St.<br />
+                    Houston, TX, 77018
+                  </p>
+                </div>
+              </div>
+              
+              <div>
+                <p className="text-xl text-muted-foreground mb-6">
+                  For any snail mail, please send it to our travel mailbox.
+                </p>
+                <div className="bg-card p-6 rounded-lg border shadow-soft">
+                  <p className="text-lg font-medium text-foreground">
+                    Aadil Razvi & Kiera Kosciolek<br />
+                    500 Westover Dr. #35887<br />
+                    Sanford, NC 27330
+                  </p>
+                </div>
               </div>
             </div>
           </div>
