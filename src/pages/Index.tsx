@@ -109,6 +109,13 @@ const travelEntries = [
     coordinates: [32.8328, -117.2713] as [number, number],
     travelers: ["K", "A"],
   },
+  {
+    date: "January 18-May TBD, 2026",
+    location: "Mexico City",
+    country: "Mexico",
+    coordinates: [19.4326, -99.1332] as [number, number],
+    travelers: ["K", "A"],
+  },
 ];
 
 
