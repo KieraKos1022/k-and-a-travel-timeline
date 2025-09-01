@@ -125,16 +125,8 @@ const Index = () => {
       <Hero />
       
       <main className="container mx-auto px-6 py-16">
-        {/* Timeline Section */}
-        <section className="mb-20">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-foreground mb-4">Our Travel Timeline</h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              A chronological journey through the amazing places we've visited together
-            </p>
-          </div>
-          <Timeline entries={travelEntries} />
-        </section>
+        {/* Timeline */}
+        <Timeline entries={travelEntries} />
 
         {/* How to reach us Section */}
         <section className="mb-20">
