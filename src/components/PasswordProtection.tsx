@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
-const SITE_PASSWORD = 'travel2024'; // Change this to your desired password
+const SITE_PASSWORD = 'mytems2025!'; // Change this to your desired password
 
 interface PasswordProtectionProps {
   onAuthenticated: () => void;
