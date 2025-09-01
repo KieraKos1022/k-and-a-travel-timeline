@@ -124,7 +124,7 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <Hero />
       
-      <main className="container mx-auto px-6 py-16">
+      <main className="container mx-auto px-6 py-8">
         {/* Timeline */}
         <Timeline entries={travelEntries} />
 
