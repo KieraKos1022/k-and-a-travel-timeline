@@ -9,49 +9,43 @@ const travelEntries = [
     location: "Mexico City",
     country: "Mexico",
     coordinates: [35.6762, 139.6503] as [number, number],
-    travelers: ["K", "A"],
   },
   {
     date: "May 2025",
     location: "Houston",
     country: "Texas",
     coordinates: [48.8566, 2.3522] as [number, number],
-    travelers: ["K"],
   },
   {
     date: "June 2025-July 2025",
     location: "La Jolla",
     country: "California",
     coordinates: [36.3932, 25.4615] as [number, number],
-    travelers: ["K", "A"],
   },
   {
     date: "July 2025-August 2025",
     location: "Buenos Aires", 
     country: "Argentina",
     coordinates: [40.7128, -74.0060] as [number, number],
-    travelers: ["K", "A"],
   },
     {
     date: "August 2025",
     location: "Montevideo", 
     country: "Uruguay",
     coordinates: [40.7128, -74.0060] as [number, number],
-    travelers: ["K", "A"],
   },
     {
     date: "August 26- August 29, 2025",
     location: "Houston", 
     country: "Texas",
     coordinates: [40.7128, -74.0060] as [number, number],
-    travelers: ["K"],
   },
     {
     date: "August 29-31, 2025",
     location: "Brooklyn", 
     country: "New York",
     coordinates: [40.7128, -74.0060] as [number, number],
-    travelers: ["K", "A"],
+    isCurrent: true,
   },
 ];
 
@@ -59,6 +53,7 @@ const travelEntries = [
 const globeLocations = travelEntries.map(entry => ({
   name: entry.location,
   coordinates: entry.coordinates,
+  isCurrent: entry.isCurrent,
 }));
 
 const Index = () => {
