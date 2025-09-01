@@ -56,7 +56,6 @@ const travelEntries = [
 const globeLocations = travelEntries.map(entry => ({
   name: entry.location,
   coordinates: entry.coordinates,
-  isCurrent: entry.isCurrent,
 }));
 
 const Index = () => {
