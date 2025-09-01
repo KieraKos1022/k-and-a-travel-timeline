@@ -1,8 +1,103 @@
 import { Hero } from "@/components/Hero";
 import { Timeline } from "@/components/Timeline";
 
+// Function to parse date ranges and check if current date falls within them
+const isCurrentLocation = (dateString: string): boolean => {
+  const now = new Date();
+  const currentMonth = now.getMonth() + 1; // JavaScript months are 0-indexed
+  const currentYear = now.getFullYear();
+  const currentDay = now.getDate();
+
+  // Handle different date formats
+  if (dateString.includes("TBD")) {
+    // For TBD dates, we can't determine if they're current
+    return false;
+  }
+
+  // Parse various date formats
+  try {
+    // Handle ranges like "September 2-7, 2025" or "August 26- August 29, 2025"
+    if (dateString.includes("-") && !dateString.includes("TBD")) {
+      const parts = dateString.split("-");
+      if (parts.length >= 2) {
+        const startPart = parts[0].trim();
+        const endPart = parts[1].trim();
+        
+        // Extract start date
+        let startMonth, startDay, startYear;
+        if (startPart.includes(",")) {
+          const startSegments = startPart.split(" ");
+          startMonth = getMonthNumber(startSegments[0]);
+          startDay = parseInt(startSegments[1]);
+          startYear = parseInt(startSegments[2].replace(",", ""));
+        } else {
+          const startSegments = startPart.split(" ");
+          startMonth = getMonthNumber(startSegments[0]);
+          startDay = startSegments[1] ? parseInt(startSegments[1]) : 1;
+          startYear = currentYear; // Assume current year if not specified
+        }
+        
+        // Extract end date
+        let endMonth, endDay, endYear;
+        if (endPart.includes(",")) {
+          const endSegments = endPart.split(" ");
+          if (endSegments.length >= 3) {
+            endMonth = getMonthNumber(endSegments[0]);
+            endDay = parseInt(endSegments[1].replace(",", ""));
+            endYear = parseInt(endSegments[2]);
+          } else {
+            endDay = parseInt(endSegments[0].replace(",", ""));
+            endMonth = startMonth;
+            endYear = parseInt(endSegments[1]);
+          }
+        } else {
+          const endSegments = endPart.split(" ");
+          if (endSegments.length >= 2) {
+            endMonth = getMonthNumber(endSegments[0]);
+            endDay = endSegments[1] ? parseInt(endSegments[1]) : 31;
+            endYear = currentYear;
+          } else {
+            endDay = parseInt(endSegments[0]);
+            endMonth = startMonth;
+            endYear = startYear;
+          }
+        }
+        
+        // Create date objects for comparison
+        const startDate = new Date(startYear, startMonth - 1, startDay);
+        const endDate = new Date(endYear, endMonth - 1, endDay);
+        
+        return now >= startDate && now <= endDate;
+      }
+    }
+    
+    // Handle single months like "May 2025"
+    const monthMatch = dateString.match(/(\w+)\s+(\d{4})/);
+    if (monthMatch) {
+      const month = getMonthNumber(monthMatch[1]);
+      const year = parseInt(monthMatch[2]);
+      
+      return currentMonth === month && currentYear === year;
+    }
+    
+  } catch (error) {
+    console.error("Error parsing date:", dateString, error);
+  }
+  
+  return false;
+};
+
+// Helper function to convert month names to numbers
+const getMonthNumber = (monthName: string): number => {
+  const months = {
+    january: 1, february: 2, march: 3, april: 4, may: 5, june: 6,
+    july: 7, august: 8, september: 9, october: 10, november: 11, december: 12
+  };
+  return months[monthName.toLowerCase() as keyof typeof months] || 1;
+};
+
 // Sample travel data - replace with your actual travel history
-const travelEntries = [
+const baseTravelEntries = [
   {
     date: "January 2025 -May 2025",
     location: "Mexico City",
@@ -58,7 +153,6 @@ const travelEntries = [
     country: "Montana",
     coordinates: [44.4280, -110.5885] as [number, number],
     travelers: ["K", "A"],
-    isCurrent: true,
   },
   {
     date: "September 9-18, 2025",
@@ -117,6 +211,12 @@ const travelEntries = [
     travelers: ["K", "A"],
   },
 ];
+
+// Add dynamic current location detection
+const travelEntries = baseTravelEntries.map(entry => ({
+  ...entry,
+  isCurrent: isCurrentLocation(entry.date)
+}));
 
 
 const Index = () => {
