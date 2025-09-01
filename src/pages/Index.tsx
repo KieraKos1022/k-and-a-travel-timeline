@@ -27,29 +27,45 @@ const travelEntries = [
     location: "Buenos Aires", 
     country: "Argentina",
     coordinates: [40.7128, -74.0060] as [number, number],
-    isCurrent: true,
+    
   },
     {
     date: "August 2025",
     location: "Montevideo", 
     country: "Uruguay",
     coordinates: [40.7128, -74.0060] as [number, number],
-    isCurrent: true,
+   
   },
     {
     date: "August 26- August 29, 2025",
     location: "Houston", 
     country: "Texas",
     coordinates: [40.7128, -74.0060] as [number, number],
-    isCurrent: true,
+ 
   },
     {
     date: "August 29-31, 2025",
     location: "Brooklyn", 
     country: "New York",
     coordinates: [40.7128, -74.0060] as [number, number],
+  },
+    {
+    date: "September 2-7, 2025",
+    location: "Yellowstone", 
+    country: "Montana",
+    coordinates: [40.7128, -74.0060] as [number, number],
     isCurrent: true,
   },
+    {
+    date: "September 9-18",
+    location: "La Jolla", 
+    country: "California",
+    coordinates: [40.7128, -74.0060] as [number, number],
+  },
+   date: "September 18-20",
+    location: "Chicago", 
+    country: "Illinois",
+    coordinates: [40.7128, -74.0060] as [number, number],
 ];
 
 // Convert travel entries to globe locations
