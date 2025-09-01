@@ -7,6 +7,7 @@ interface TimelineEntry {
   country: string;
   coordinates: [number, number];
   isCurrent?: boolean;
+  travelers?: string[];
 }
 
 interface TimelineProps {
@@ -55,6 +56,16 @@ export const Timeline = ({ entries }: TimelineProps) => {
               </div>
               
               <p className="text-sm text-muted-foreground font-medium">{entry.country}</p>
+              
+              {entry.travelers && (
+                <div className="flex gap-2 mt-3">
+                  {entry.travelers.map((traveler, idx) => (
+                    <div key={idx} className="w-8 h-8 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center">
+                      <span className="text-white text-sm font-semibold">{traveler}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </Card>
 
             {/* Spacer for alternating layout */}

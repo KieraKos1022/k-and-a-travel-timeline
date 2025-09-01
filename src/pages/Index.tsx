@@ -9,6 +9,7 @@ const travelEntries = [
     location: "Mexico City",
     country: "Mexico",
     coordinates: [35.6762, 139.6503] as [number, number],
+    travelers: ["K"]
   },
   {
     date: "May 2025",
@@ -62,10 +63,13 @@ const travelEntries = [
     country: "California",
     coordinates: [40.7128, -74.0060] as [number, number],
   },
-   date: "September 18-20",
+  {
+    date: "September 18-20",
     location: "Chicago", 
     country: "Illinois",
     coordinates: [40.7128, -74.0060] as [number, number],
+    travelers: ["K", "A"]
+  }
 ];
 
 // Convert travel entries to globe locations
