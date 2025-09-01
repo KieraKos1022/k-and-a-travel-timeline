@@ -40,6 +40,47 @@ const LocationMarker = ({ position, name, isCurrent }: { position: THREE.Vector3
 
 const Globe = ({ locations }: { locations: Location[] }) => {
   const globeRef = useRef<THREE.Mesh>(null);
+  const [earthTexture] = useState(() => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 1024;
+    canvas.height = 512;
+    const ctx = canvas.getContext('2d')!;
+    
+    // Create a simple Earth-like texture
+    const gradient = ctx.createLinearGradient(0, 0, 0, 512);
+    gradient.addColorStop(0, '#87CEEB'); // Sky blue (poles)
+    gradient.addColorStop(0.3, '#4682B4'); // Steel blue (ocean)
+    gradient.addColorStop(0.7, '#4682B4'); // Steel blue (ocean)
+    gradient.addColorStop(1, '#87CEEB'); // Sky blue (poles)
+    
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, 1024, 512);
+    
+    // Add some land masses (simplified continents)
+    ctx.fillStyle = '#228B22'; // Forest green for land
+    
+    // North America
+    ctx.fillRect(100, 150, 200, 120);
+    ctx.fillRect(150, 120, 100, 50);
+    
+    // South America  
+    ctx.fillRect(200, 280, 80, 160);
+    
+    // Europe
+    ctx.fillRect(450, 140, 60, 40);
+    
+    // Africa
+    ctx.fillRect(480, 180, 80, 140);
+    
+    // Asia
+    ctx.fillRect(550, 120, 200, 100);
+    ctx.fillRect(650, 220, 150, 80);
+    
+    // Australia
+    ctx.fillRect(750, 320, 80, 50);
+    
+    return new THREE.CanvasTexture(canvas);
+  });
 
   useFrame(() => {
     if (globeRef.current) {
@@ -63,9 +104,8 @@ const Globe = ({ locations }: { locations: Location[] }) => {
     <>
       <Sphere ref={globeRef} args={[1, 64, 64]} position={[0, 0, 0]}>
         <meshStandardMaterial
-          map={null}
-          color="#2563eb"
-          roughness={0.7}
+          map={earthTexture}
+          roughness={0.8}
           metalness={0.1}
         />
       </Sphere>
