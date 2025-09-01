@@ -1,6 +1,5 @@
 import { Hero } from "@/components/Hero";
 import { Timeline } from "@/components/Timeline";
-import { WorldMap } from "@/components/WorldMap";
 
 // Sample travel data - replace with your actual travel history
 const travelEntries = [
@@ -112,11 +111,6 @@ const travelEntries = [
   },
 ];
 
-// Convert travel entries to globe locations
-const globeLocations = travelEntries.map(entry => ({
-  name: entry.location,
-  coordinates: entry.coordinates,
-}));
 
 const Index = () => {
   return (
@@ -135,12 +129,6 @@ const Index = () => {
           <Timeline entries={travelEntries} />
         </section>
 
-        {/* Map Section */}
-        <section className="mb-16">
-          <div className="max-w-4xl mx-auto">
-            <WorldMap locations={globeLocations} />
-          </div>
-        </section>
       </main>
     </div>
   );
