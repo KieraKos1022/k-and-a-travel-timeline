@@ -1,6 +1,6 @@
 import { Hero } from "@/components/Hero";
 import { Timeline } from "@/components/Timeline";
-import { InteractiveGlobe } from "@/components/InteractiveGlobe";
+import { WorldMap } from "@/components/WorldMap";
 
 // Sample travel data - replace with your actual travel history
 const travelEntries = [
@@ -55,16 +55,10 @@ const Index = () => {
           <Timeline entries={travelEntries} />
         </section>
 
-        {/* Globe Section */}
+        {/* Map Section */}
         <section className="mb-16">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-foreground mb-4">Interactive Globe</h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Explore our journey on this interactive 3D globe. Click and drag to rotate, scroll to zoom!
-            </p>
-          </div>
           <div className="max-w-4xl mx-auto">
-            <InteractiveGlobe locations={globeLocations} />
+            <WorldMap locations={globeLocations} />
           </div>
         </section>
       </main>
