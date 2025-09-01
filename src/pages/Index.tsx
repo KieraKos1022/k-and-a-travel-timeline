@@ -229,7 +229,7 @@ const Index = () => {
         <Timeline entries={travelEntries} />
 
         {/* How to reach us Section */}
-        <section className="mb-20">
+        <section className="mb-20 mt-16">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold text-foreground mb-4">How to reach us</h2>
             <div className="max-w-2xl mx-auto space-y-8">
