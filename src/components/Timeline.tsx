@@ -1,5 +1,6 @@
 import { MapPin, Calendar } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { useEffect, useRef } from "react";
 
 interface TimelineEntry {
   date: string;
@@ -15,6 +16,17 @@ interface TimelineProps {
 }
 
 export const Timeline = ({ entries }: TimelineProps) => {
+  const currentEntryRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (currentEntryRef.current) {
+      currentEntryRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+    }
+  }, []);
+
   return (
     <div className="relative max-w-4xl mx-auto">
       <div className="absolute left-8 md:left-1/2 transform md:-translate-x-px top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary via-secondary to-accent"></div>
@@ -23,6 +35,7 @@ export const Timeline = ({ entries }: TimelineProps) => {
         {entries.map((entry, index) => (
           <div
             key={index}
+            ref={entry.isCurrent ? currentEntryRef : null}
             className={`relative flex items-center ${
               index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
             } flex-col md:space-x-8`}
