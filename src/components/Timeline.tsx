@@ -19,13 +19,26 @@ export const Timeline = ({ entries }: TimelineProps) => {
   const currentEntryRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (currentEntryRef.current) {
-      currentEntryRef.current.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center'
-      });
-    }
+    const timer = setTimeout(() => {
+      if (currentEntryRef.current) {
+        console.log("Scrolling to current entry");
+        currentEntryRef.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        });
+      } else {
+        console.log("No current entry found or ref not attached");
+      }
+    }, 100);
+
+    return () => clearTimeout(timer);
   }, []);
+
+  // Debug: Check if there are current entries
+  useEffect(() => {
+    const currentEntries = entries.filter(entry => entry.isCurrent);
+    console.log("Current entries found:", currentEntries.length, currentEntries);
+  }, [entries]);
 
   return (
     <div className="relative max-w-4xl mx-auto">
