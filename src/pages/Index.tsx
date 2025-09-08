@@ -99,7 +99,7 @@ const getMonthNumber = (monthName: string): number => {
 // Sample travel data - replace with your actual travel history
 const baseTravelEntries = [
   {
-    date: "January 2025 -May 2025",
+    date: "January 2025-May 2025",
     location: "Mexico City",
     country: "Mexico",
     coordinates: [19.4326, -99.1332] as [number, number],
@@ -134,7 +134,7 @@ const baseTravelEntries = [
     travelers: ["K", "A"],
   },
   {
-    date: "August 26- August 29, 2025",
+    date: "August 26-August 29, 2025",
     location: "Houston", 
     country: "Texas",
     coordinates: [29.7604, -95.3698] as [number, number],
