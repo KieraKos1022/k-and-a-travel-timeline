@@ -169,14 +169,14 @@ const baseTravelEntries = [
     travelers: ["K"],
   },
   {
-    date: "September 21-October 5, 2025",
+    date: "October 7, 2025",
     location: "Mexico City",
     country: "Mexico",
     coordinates: [19.4326, -99.1332] as [number, number],
     travelers: ["K", "A"],
   },
   {
-    date: "October 5-October 21, 2025",
+    date: "October 9-October 19, 2025",
     location: "Chicago",
     country: "Illinois",
     coordinates: [41.8781, -87.6298] as [number, number],
