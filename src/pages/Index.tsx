@@ -197,7 +197,7 @@ const baseTravelEntries = [
     travelers: ["K", "A"],
   },
   {
-    date: "December 10-December 30, 2025",
+    date: "December 12-December 30, 2025",
     location: "La Jolla",
     country: "California",
     coordinates: [32.8328, -117.2713] as [number, number],
