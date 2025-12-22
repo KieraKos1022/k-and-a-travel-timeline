@@ -202,6 +202,7 @@ const baseTravelEntries = [
     country: "California",
     coordinates: [32.8328, -117.2713] as [number, number],
     travelers: ["K", "A"],
+    isCurrent: true,
   },
   {
     date: "December 30, 2025-January 2, 2026",
@@ -247,10 +248,10 @@ const baseTravelEntries = [
   },
 ];
 
-// Add dynamic current location detection
+// Use explicit isCurrent flag if set, otherwise use dynamic detection
 const travelEntries = baseTravelEntries.map(entry => ({
   ...entry,
-  isCurrent: isCurrentLocation(entry.date)
+  isCurrent: entry.isCurrent === true ? true : false
 }));
 
 
