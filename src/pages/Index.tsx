@@ -204,6 +204,13 @@ const baseTravelEntries = [
     travelers: ["K", "A"],
   },
   {
+    date: "December 30, 2025-January 2, 2026",
+    location: "Three Rivers",
+    country: "California",
+    coordinates: [36.4388, -118.9048] as [number, number],
+    travelers: ["K", "A"],
+  },
+  {
     date: "January 18-May TBD, 2026",
     location: "Mexico City",
     country: "Mexico",
