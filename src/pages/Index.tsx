@@ -238,6 +238,13 @@ const baseTravelEntries = [
     coordinates: [29.9511, -98.7307] as [number, number],
     travelers: ["K", "A"],
   },
+  {
+    date: "Early June 2026",
+    location: "London",
+    country: "England",
+    coordinates: [51.5074, -0.1278] as [number, number],
+    travelers: ["K", "A"],
+  },
 ];
 
 // Add dynamic current location detection
