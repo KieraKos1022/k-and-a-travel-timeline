@@ -231,6 +231,13 @@ const baseTravelEntries = [
     coordinates: [19.4326, -99.1332] as [number, number],
     travelers: ["K", "A"],
   },
+  {
+    date: "January 23-January 25, 2026",
+    location: "Moon River Ranch",
+    country: "Texas",
+    coordinates: [29.9511, -98.7307] as [number, number],
+    travelers: ["K", "A"],
+  },
 ];
 
 // Add dynamic current location detection
