@@ -246,6 +246,20 @@ const baseTravelEntries = [
     coordinates: [51.5074, -0.1278] as [number, number],
     travelers: ["K", "A"],
   },
+  {
+    date: "Late August-Early October 2026",
+    location: "Italy",
+    country: "Italy",
+    coordinates: [41.9028, 12.4964] as [number, number],
+    travelers: ["K", "A"],
+  },
+  {
+    date: "Early October-End of October 2026",
+    location: "Portugal",
+    country: "Portugal",
+    coordinates: [38.7223, -9.1393] as [number, number],
+    travelers: ["K", "A"],
+  },
 ];
 
 // Use explicit isCurrent flag if set, otherwise use dynamic detection
