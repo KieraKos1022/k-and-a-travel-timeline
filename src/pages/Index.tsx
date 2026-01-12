@@ -111,7 +111,6 @@ const travel2026Entries = [
     country: "Texas",
     coordinates: [30.2672, -97.7431] as [number, number],
     travelers: ["K", "A"],
-    isCurrent: true,
   },
   {
     date: "January 10-January 18, 2026",
@@ -119,6 +118,7 @@ const travel2026Entries = [
     country: "Texas",
     coordinates: [30.6280, -96.3344] as [number, number],
     travelers: ["K", "A"],
+    isCurrent: true,
   },
   {
     date: "January 23-January 25, 2026",
