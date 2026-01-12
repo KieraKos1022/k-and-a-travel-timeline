@@ -96,8 +96,69 @@ const getMonthNumber = (monthName: string): number => {
   return months[monthName.toLowerCase() as keyof typeof months] || 1;
 };
 
-// Sample travel data - replace with your actual travel history
-const baseTravelEntries = [
+// 2026 travel entries
+const travel2026Entries = [
+  {
+    date: "December 30, 2025-January 2, 2026",
+    location: "Three Rivers",
+    country: "California",
+    coordinates: [36.4388, -118.9048] as [number, number],
+    travelers: ["K", "A"],
+    isCurrent: true,
+  },
+  {
+    date: "January 3-January 13, 2026",
+    location: "Austin",
+    country: "Texas",
+    coordinates: [30.2672, -97.7431] as [number, number],
+    travelers: ["K", "A"],
+  },
+  {
+    date: "January 13-January 18, 2026",
+    location: "College Station/Houston",
+    country: "Texas",
+    coordinates: [30.6280, -96.3344] as [number, number],
+    travelers: ["K", "A"],
+  },
+  {
+    date: "January 23-January 25, 2026",
+    location: "Moon River Ranch",
+    country: "Texas",
+    coordinates: [29.9511, -98.7307] as [number, number],
+    travelers: ["K", "A"],
+  },
+  {
+    date: "January 18-May 25, 2026",
+    location: "Mexico City",
+    country: "Mexico",
+    coordinates: [19.4326, -99.1332] as [number, number],
+    travelers: ["K", "A"],
+  },
+  {
+    date: "Early June 2026",
+    location: "London",
+    country: "England",
+    coordinates: [51.5074, -0.1278] as [number, number],
+    travelers: ["K", "A"],
+  },
+  {
+    date: "Late August-Early October 2026",
+    location: "Italy",
+    country: "Italy",
+    coordinates: [41.9028, 12.4964] as [number, number],
+    travelers: ["K", "A"],
+  },
+  {
+    date: "Early October-End of October 2026",
+    location: "Portugal",
+    country: "Portugal",
+    coordinates: [38.7223, -9.1393] as [number, number],
+    travelers: ["K", "A"],
+  },
+];
+
+// 2025 travel entries
+const travel2025Entries = [
   {
     date: "January 2025-May 2025",
     location: "Mexico City",
@@ -202,70 +263,18 @@ const baseTravelEntries = [
     country: "California",
     coordinates: [32.8328, -117.2713] as [number, number],
     travelers: ["K", "A"],
-    isCurrent: true,
-  },
-  {
-    date: "December 30, 2025-January 2, 2026",
-    location: "Three Rivers",
-    country: "California",
-    coordinates: [36.4388, -118.9048] as [number, number],
-    travelers: ["K", "A"],
-  },
-  {
-    date: "January 3-January 13, 2026",
-    location: "Austin",
-    country: "Texas",
-    coordinates: [30.2672, -97.7431] as [number, number],
-    travelers: ["K", "A"],
-  },
-  {
-    date: "January 13-January 18, 2026",
-    location: "College Station/Houston",
-    country: "Texas",
-    coordinates: [30.6280, -96.3344] as [number, number],
-    travelers: ["K", "A"],
-  },
-  {
-    date: "January 23-January 25, 2026",
-    location: "Moon River Ranch",
-    country: "Texas",
-    coordinates: [29.9511, -98.7307] as [number, number],
-    travelers: ["K", "A"],
-  },
-  {
-    date: "January 18-May 25, 2026",
-    location: "Mexico City",
-    country: "Mexico",
-    coordinates: [19.4326, -99.1332] as [number, number],
-    travelers: ["K", "A"],
-  },
-  {
-    date: "Early June 2026",
-    location: "London",
-    country: "England",
-    coordinates: [51.5074, -0.1278] as [number, number],
-    travelers: ["K", "A"],
-  },
-  {
-    date: "Late August-Early October 2026",
-    location: "Italy",
-    country: "Italy",
-    coordinates: [41.9028, 12.4964] as [number, number],
-    travelers: ["K", "A"],
-  },
-  {
-    date: "Early October-End of October 2026",
-    location: "Portugal",
-    country: "Portugal",
-    coordinates: [38.7223, -9.1393] as [number, number],
-    travelers: ["K", "A"],
   },
 ];
 
-// Use explicit isCurrent flag if set, otherwise use dynamic detection
-const travelEntries = baseTravelEntries.map(entry => ({
+// Process entries with isCurrent flag
+const travelEntries2026 = travel2026Entries.map(entry => ({
   ...entry,
   isCurrent: entry.isCurrent === true ? true : false
+}));
+
+const travelEntries2025 = travel2025Entries.map(entry => ({
+  ...entry,
+  isCurrent: false
 }));
 
 
@@ -275,8 +284,14 @@ const Index = () => {
       <Hero />
       
       <main className="container mx-auto px-6 py-4">
-        {/* Timeline */}
-        <Timeline entries={travelEntries} />
+        {/* 2026 Timeline */}
+        <Timeline entries={travelEntries2026} />
+
+        {/* 2025 Travels Section */}
+        <section className="mt-16 mb-8">
+          <h2 className="text-3xl font-bold text-foreground text-center mb-8">2025 Travels</h2>
+          <Timeline entries={travelEntries2025} />
+        </section>
 
         {/* How to reach us Section */}
         <section className="mb-20 mt-16">
