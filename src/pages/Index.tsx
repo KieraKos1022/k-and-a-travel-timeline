@@ -1,5 +1,6 @@
 import { Hero } from "@/components/Hero";
 import { Timeline } from "@/components/Timeline";
+import { useEffect } from "react";
 
 // Function to parse date ranges and check if current date falls within them
 const isCurrentLocation = (dateString: string): boolean => {
@@ -279,6 +280,20 @@ const travelEntries2025 = travel2025Entries.map(entry => ({
 
 
 const Index = () => {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const currentEntry = document.querySelector('[data-current="true"]');
+      if (currentEntry) {
+        currentEntry.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        });
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
       <Hero />
