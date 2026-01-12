@@ -1,6 +1,5 @@
 import { MapPin, Calendar } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { useEffect, useRef } from "react";
 
 interface TimelineEntry {
   date: string;
@@ -16,30 +15,6 @@ interface TimelineProps {
 }
 
 export const Timeline = ({ entries }: TimelineProps) => {
-  const currentEntryRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (currentEntryRef.current) {
-        console.log("Scrolling to current entry");
-        currentEntryRef.current.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center'
-        });
-      } else {
-        console.log("No current entry found or ref not attached");
-      }
-    }, 100);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Debug: Check if there are current entries
-  useEffect(() => {
-    const currentEntries = entries.filter(entry => entry.isCurrent);
-    console.log("Current entries found:", currentEntries.length, currentEntries);
-  }, [entries]);
-
   return (
     <div className="relative max-w-4xl mx-auto">
       <div className="absolute left-8 md:left-1/2 transform md:-translate-x-px top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary via-secondary to-accent"></div>
@@ -48,7 +23,7 @@ export const Timeline = ({ entries }: TimelineProps) => {
         {entries.map((entry, index) => (
           <div
             key={index}
-            ref={entry.isCurrent ? currentEntryRef : null}
+            data-current={entry.isCurrent ? "true" : undefined}
             className={`relative flex items-center ${
               index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
             } flex-col md:space-x-8`}
