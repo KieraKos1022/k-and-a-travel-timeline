@@ -106,7 +106,7 @@ const travel2026Entries = [
     travelers: ["K", "A"],
   },
   {
-    date: "January 3-January 13, 2026",
+    date: "January 3-January 10, 2026",
     location: "Austin",
     country: "Texas",
     coordinates: [30.2672, -97.7431] as [number, number],
@@ -114,7 +114,7 @@ const travel2026Entries = [
     isCurrent: true,
   },
   {
-    date: "January 13-January 18, 2026",
+    date: "January 10-January 18, 2026",
     location: "College Station/Houston",
     country: "Texas",
     coordinates: [30.6280, -96.3344] as [number, number],
@@ -135,7 +135,7 @@ const travel2026Entries = [
     travelers: ["K", "A"],
   },
   {
-    date: "Early June 2026",
+    date: "June 2026",
     location: "London",
     country: "England",
     coordinates: [51.5074, -0.1278] as [number, number],
