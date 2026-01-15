@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-
-const SITE_PASSWORD = 'mytems2025!'; // Change this to your desired password
+import { supabase } from '@/integrations/supabase/client';
 
 interface PasswordProtectionProps {
   onAuthenticated: () => void;
@@ -12,16 +11,48 @@ interface PasswordProtectionProps {
 export const PasswordProtection: React.FC<PasswordProtectionProps> = ({ onAuthenticated }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (password === SITE_PASSWORD) {
-      localStorage.setItem('site_authenticated', 'true');
-      onAuthenticated();
-    } else {
-      setError('Incorrect password');
+    setError('');
+    setIsLoading(true);
+
+    try {
+      // Validate input on client side first
+      if (!password.trim()) {
+        setError('Please enter a password');
+        setIsLoading(false);
+        return;
+      }
+
+      // Call the edge function for server-side validation
+      const { data, error: fnError } = await supabase.functions.invoke('verify-password', {
+        body: { password: password.trim() }
+      });
+
+      if (fnError) {
+        console.error('Edge function error:', fnError);
+        setError('An error occurred. Please try again.');
+        setPassword('');
+        setIsLoading(false);
+        return;
+      }
+
+      if (data?.success && data?.sessionToken) {
+        // Store the session token (server-generated) instead of a static flag
+        localStorage.setItem('site_session_token', data.sessionToken);
+        onAuthenticated();
+      } else {
+        setError(data?.error || 'Incorrect password');
+        setPassword('');
+      }
+    } catch (err) {
+      console.error('Verification error:', err);
+      setError('An error occurred. Please try again.');
       setPassword('');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -44,13 +75,14 @@ export const PasswordProtection: React.FC<PasswordProtectionProps> = ({ onAuthen
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full"
                 autoFocus
+                disabled={isLoading}
               />
               {error && (
                 <p className="text-destructive text-sm mt-2">{error}</p>
               )}
             </div>
-            <Button type="submit" className="w-full">
-              Access Site
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? 'Verifying...' : 'Access Site'}
             </Button>
           </form>
         </CardContent>
