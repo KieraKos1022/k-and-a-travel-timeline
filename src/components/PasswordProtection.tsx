@@ -42,11 +42,17 @@ export const PasswordProtection: React.FC<PasswordProtectionProps> = ({ onAuthen
       }
 
       if (data?.success && data?.sessionToken) {
-        // Store the session token (server-generated) instead of a static flag
+        // Store the server-validated session token
         localStorage.setItem('site_session_token', data.sessionToken);
         onAuthenticated();
+      } else if (data?.rateLimited) {
+        setError(data?.error || 'Too many attempts. Please try again later.');
+        setPassword('');
       } else {
-        setError(data?.error || 'Incorrect password');
+        const attemptsMsg = data?.attemptsRemaining !== undefined 
+          ? ` (${data.attemptsRemaining} attempts remaining)`
+          : '';
+        setError((data?.error || 'Incorrect password') + attemptsMsg);
         setPassword('');
       }
     } catch (err) {
