@@ -14,8 +14,9 @@ const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    const authenticated = localStorage.getItem('site_authenticated') === 'true';
-    setIsAuthenticated(authenticated);
+    // Check for server-generated session token instead of static flag
+    const sessionToken = localStorage.getItem('site_session_token');
+    setIsAuthenticated(!!sessionToken);
   }, []);
 
   const handleAuthenticated = () => {
