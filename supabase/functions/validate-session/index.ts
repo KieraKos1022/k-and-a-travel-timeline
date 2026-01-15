@@ -1,19 +1,64 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.56.1";
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+// Allowed origins for CORS - restrict to your application domains
+const ALLOWED_ORIGINS = [
+  'https://k-and-a-travel-timeline.lovable.app',
+  'https://id-preview--f10ebce9-33fd-4fb0-b50c-16669c546bcd.lovable.app'
+];
+
+// Add localhost for development
+if (Deno.env.get('ENVIRONMENT') !== 'production') {
+  ALLOWED_ORIGINS.push('http://localhost:5173', 'http://localhost:3000');
+}
+
+function getCorsHeaders(origin: string | null): Record<string, string> {
+  const allowedOrigin = origin && ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  return {
+    'Access-Control-Allow-Origin': allowedOrigin,
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, cookie',
+    'Access-Control-Allow-Credentials': 'true',
+  };
+}
+
+// Parse cookies from request
+function parseCookies(cookieHeader: string | null): Record<string, string> {
+  const cookies: Record<string, string> = {};
+  if (!cookieHeader) return cookies;
+  
+  cookieHeader.split(';').forEach(cookie => {
+    const [name, ...rest] = cookie.trim().split('=');
+    if (name) {
+      cookies[name] = rest.join('=');
+    }
+  });
+  return cookies;
+}
 
 serve(async (req) => {
+  const origin = req.headers.get('origin');
+  const corsHeaders = getCorsHeaders(origin);
+
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { sessionToken } = await req.json();
+    // Try to get session token from httpOnly cookie first, then from request body (fallback)
+    const cookieHeader = req.headers.get('cookie');
+    const cookies = parseCookies(cookieHeader);
+    let sessionToken = cookies['site_session'];
+
+    // Fallback to request body for backwards compatibility
+    if (!sessionToken) {
+      try {
+        const body = await req.json();
+        sessionToken = body.sessionToken;
+      } catch {
+        // No body provided
+      }
+    }
 
     // Validate input
     if (!sessionToken || typeof sessionToken !== 'string') {
