@@ -1,9 +1,34 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.56.1";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
+
+// Rate limiting configuration
+const MAX_ATTEMPTS = 5;
+const BLOCK_DURATION_MINUTES = 15;
+const ATTEMPT_WINDOW_MINUTES = 10;
+const SESSION_DURATION_HOURS = 24;
+
+// Timing-safe string comparison to prevent timing attacks
+function timingSafeEqual(a: string, b: string): boolean {
+  if (a.length !== b.length) {
+    // Still do a comparison to maintain constant time
+    let result = 0;
+    for (let i = 0; i < a.length; i++) {
+      result |= a.charCodeAt(i) ^ (b.charCodeAt(i % b.length) || 0);
+    }
+    return false;
+  }
+  
+  let result = 0;
+  for (let i = 0; i < a.length; i++) {
+    result |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  }
+  return result === 0;
+}
 
 serve(async (req) => {
   // Handle CORS preflight requests
@@ -12,6 +37,61 @@ serve(async (req) => {
   }
 
   try {
+    // Initialize Supabase client with service role for database access
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // Get client IP for rate limiting
+    const clientIP = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 
+                     req.headers.get('x-real-ip') || 
+                     'unknown';
+
+    // Check rate limiting
+    const { data: rateLimitData } = await supabase
+      .from('rate_limit_attempts')
+      .select('*')
+      .eq('ip_address', clientIP)
+      .maybeSingle();
+
+    if (rateLimitData) {
+      // Check if still blocked
+      if (rateLimitData.blocked_until && new Date(rateLimitData.blocked_until) > new Date()) {
+        const remainingSeconds = Math.ceil((new Date(rateLimitData.blocked_until).getTime() - Date.now()) / 1000);
+        console.log(`Rate limited IP ${clientIP}, blocked for ${remainingSeconds} more seconds`);
+        return new Response(
+          JSON.stringify({ 
+            success: false, 
+            error: `Too many attempts. Please try again in ${Math.ceil(remainingSeconds / 60)} minutes.`,
+            rateLimited: true
+          }),
+          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      // Check if within attempt window and exceeded max attempts
+      const windowStart = new Date(Date.now() - ATTEMPT_WINDOW_MINUTES * 60 * 1000);
+      if (new Date(rateLimitData.first_attempt_at) > windowStart && 
+          rateLimitData.attempt_count >= MAX_ATTEMPTS) {
+        // Block the IP
+        const blockedUntil = new Date(Date.now() + BLOCK_DURATION_MINUTES * 60 * 1000);
+        await supabase
+          .from('rate_limit_attempts')
+          .update({ blocked_until: blockedUntil.toISOString() })
+          .eq('ip_address', clientIP);
+
+        console.log(`Blocking IP ${clientIP} until ${blockedUntil.toISOString()}`);
+        return new Response(
+          JSON.stringify({ 
+            success: false, 
+            error: `Too many attempts. Please try again in ${BLOCK_DURATION_MINUTES} minutes.`,
+            rateLimited: true
+          }),
+          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+    }
+
     const { password } = await req.json();
 
     // Validate input
@@ -34,22 +114,78 @@ serve(async (req) => {
       );
     }
 
-    // Securely compare passwords (constant-time comparison to prevent timing attacks)
-    const isValid = password === sitePassword;
+    // Timing-safe password comparison to prevent timing attacks
+    const isValid = timingSafeEqual(password, sitePassword);
     
-    console.log(`Password verification attempt: ${isValid ? 'successful' : 'failed'}`);
+    console.log(`Password verification attempt from ${clientIP}: ${isValid ? 'successful' : 'failed'}`);
 
     if (isValid) {
-      // Generate a simple session token (in production, use a more robust token system)
+      // Reset rate limiting on successful login
+      await supabase
+        .from('rate_limit_attempts')
+        .delete()
+        .eq('ip_address', clientIP);
+
+      // Generate session token and store in database
       const sessionToken = crypto.randomUUID();
+      const expiresAt = new Date(Date.now() + SESSION_DURATION_HOURS * 60 * 60 * 1000);
+      
+      const { error: insertError } = await supabase
+        .from('site_sessions')
+        .insert({
+          token: sessionToken,
+          ip_address: clientIP,
+          expires_at: expiresAt.toISOString()
+        });
+
+      if (insertError) {
+        console.error("Failed to create session:", insertError);
+        return new Response(
+          JSON.stringify({ success: false, error: 'Failed to create session' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
       
       return new Response(
         JSON.stringify({ success: true, sessionToken }),
         { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     } else {
+      // Record failed attempt for rate limiting
+      if (rateLimitData) {
+        const windowStart = new Date(Date.now() - ATTEMPT_WINDOW_MINUTES * 60 * 1000);
+        const shouldReset = new Date(rateLimitData.first_attempt_at) < windowStart;
+        
+        await supabase
+          .from('rate_limit_attempts')
+          .update({
+            attempt_count: shouldReset ? 1 : rateLimitData.attempt_count + 1,
+            first_attempt_at: shouldReset ? new Date().toISOString() : rateLimitData.first_attempt_at,
+            last_attempt_at: new Date().toISOString(),
+            blocked_until: null
+          })
+          .eq('ip_address', clientIP);
+      } else {
+        await supabase
+          .from('rate_limit_attempts')
+          .insert({
+            ip_address: clientIP,
+            attempt_count: 1,
+            first_attempt_at: new Date().toISOString(),
+            last_attempt_at: new Date().toISOString()
+          });
+      }
+
+      const attemptsRemaining = rateLimitData 
+        ? Math.max(0, MAX_ATTEMPTS - rateLimitData.attempt_count - 1)
+        : MAX_ATTEMPTS - 1;
+
       return new Response(
-        JSON.stringify({ success: false, error: 'Incorrect password' }),
+        JSON.stringify({ 
+          success: false, 
+          error: 'Incorrect password',
+          attemptsRemaining
+        }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
