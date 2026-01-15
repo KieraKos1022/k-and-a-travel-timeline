@@ -1,10 +1,25 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.56.1";
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+// Allowed origins for CORS - restrict to your application domains
+const ALLOWED_ORIGINS = [
+  'https://k-and-a-travel-timeline.lovable.app',
+  'https://id-preview--f10ebce9-33fd-4fb0-b50c-16669c546bcd.lovable.app'
+];
+
+// Add localhost for development
+if (Deno.env.get('ENVIRONMENT') !== 'production') {
+  ALLOWED_ORIGINS.push('http://localhost:5173', 'http://localhost:3000');
+}
+
+function getCorsHeaders(origin: string | null): Record<string, string> {
+  const allowedOrigin = origin && ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  return {
+    'Access-Control-Allow-Origin': allowedOrigin,
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Credentials': 'true',
+  };
+}
 
 // Rate limiting configuration
 const MAX_ATTEMPTS = 5;
@@ -31,6 +46,9 @@ function timingSafeEqual(a: string, b: string): boolean {
 }
 
 serve(async (req) => {
+  const origin = req.headers.get('origin');
+  const corsHeaders = getCorsHeaders(origin);
+
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -146,9 +164,26 @@ serve(async (req) => {
         );
       }
       
+      // Set httpOnly cookie for secure session storage
+      const cookieOptions = [
+        `site_session=${sessionToken}`,
+        'HttpOnly',
+        'Secure',
+        'SameSite=Lax',
+        `Path=/`,
+        `Max-Age=${SESSION_DURATION_HOURS * 60 * 60}`,
+      ].join('; ');
+      
       return new Response(
-        JSON.stringify({ success: true, sessionToken }),
-        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({ success: true }),
+        { 
+          status: 200, 
+          headers: { 
+            ...corsHeaders, 
+            'Content-Type': 'application/json',
+            'Set-Cookie': cookieOptions
+          } 
+        }
       );
     } else {
       // Record failed attempt for rate limiting

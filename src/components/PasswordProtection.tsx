@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { supabase } from '@/integrations/supabase/client';
 
 interface PasswordProtectionProps {
   onAuthenticated: () => void;
 }
+
+// Edge function URL for password verification
+const VERIFY_PASSWORD_URL = 'https://uscagdpxrfhdmjexagtj.supabase.co/functions/v1/verify-password';
 
 export const PasswordProtection: React.FC<PasswordProtectionProps> = ({ onAuthenticated }) => {
   const [password, setPassword] = useState('');
@@ -26,14 +28,21 @@ export const PasswordProtection: React.FC<PasswordProtectionProps> = ({ onAuthen
         return;
       }
 
-      // Call the edge function for server-side validation
-      const { data, error: fnError } = await supabase.functions.invoke('verify-password', {
-        body: { password: password.trim() }
+      // Call the edge function for server-side validation with credentials
+      const response = await fetch(VERIFY_PASSWORD_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // Allow httpOnly cookies to be set
+        body: JSON.stringify({ password: password.trim() }),
       });
 
-      if (fnError) {
+      const data = await response.json();
+
+      if (!response.ok && response.status !== 401 && response.status !== 429) {
         if (import.meta.env.DEV) {
-          console.error('Edge function error:', fnError);
+          console.error('Edge function error:', response.status);
         }
         setError('An error occurred. Please try again.');
         setPassword('');
@@ -41,9 +50,8 @@ export const PasswordProtection: React.FC<PasswordProtectionProps> = ({ onAuthen
         return;
       }
 
-      if (data?.success && data?.sessionToken) {
-        // Store the server-validated session token
-        localStorage.setItem('site_session_token', data.sessionToken);
+      if (data?.success) {
+        // Session is now stored in httpOnly cookie automatically
         onAuthenticated();
       } else if (data?.rateLimited) {
         setError(data?.error || 'Too many attempts. Please try again later.');

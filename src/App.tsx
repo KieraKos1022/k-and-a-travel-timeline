@@ -5,11 +5,13 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { PasswordProtection } from "@/components/PasswordProtection";
-import { supabase } from "@/integrations/supabase/client";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
+
+// Edge function URL for session validation
+const VALIDATE_SESSION_URL = 'https://uscagdpxrfhdmjexagtj.supabase.co/functions/v1/validate-session';
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -17,29 +19,26 @@ const App = () => {
 
   useEffect(() => {
     const validateSession = async () => {
-      const sessionToken = localStorage.getItem('site_session_token');
-      
-      if (!sessionToken) {
-        setIsValidating(false);
-        return;
-      }
-
       try {
-        // Validate session with server
-        const { data, error } = await supabase.functions.invoke('validate-session', {
-          body: { sessionToken }
+        // Validate session with server using httpOnly cookie
+        const response = await fetch(VALIDATE_SESSION_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include', // Include httpOnly cookies
+          body: JSON.stringify({}), // Empty body, session read from cookie
         });
 
-        if (error || !data?.valid) {
-          // Invalid session - remove it
-          localStorage.removeItem('site_session_token');
-          setIsAuthenticated(false);
-        } else {
+        const data = await response.json();
+
+        if (data?.valid) {
           setIsAuthenticated(true);
+        } else {
+          setIsAuthenticated(false);
         }
       } catch (err) {
-        // On error, clear the session for safety
-        localStorage.removeItem('site_session_token');
+        // On error, assume not authenticated
         setIsAuthenticated(false);
       } finally {
         setIsValidating(false);
