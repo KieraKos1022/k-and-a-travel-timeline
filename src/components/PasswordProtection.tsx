@@ -32,7 +32,9 @@ export const PasswordProtection: React.FC<PasswordProtectionProps> = ({ onAuthen
       });
 
       if (fnError) {
-        console.error('Edge function error:', fnError);
+        if (import.meta.env.DEV) {
+          console.error('Edge function error:', fnError);
+        }
         setError('An error occurred. Please try again.');
         setPassword('');
         setIsLoading(false);
@@ -48,7 +50,9 @@ export const PasswordProtection: React.FC<PasswordProtectionProps> = ({ onAuthen
         setPassword('');
       }
     } catch (err) {
-      console.error('Verification error:', err);
+      if (import.meta.env.DEV) {
+        console.error('Verification error:', err);
+      }
       setError('An error occurred. Please try again.');
       setPassword('');
     } finally {
