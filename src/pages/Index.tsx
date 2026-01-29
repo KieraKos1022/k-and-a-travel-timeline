@@ -119,14 +119,6 @@ const travel2026Entries = [
     country: "Texas",
     coordinates: [30.6280, -96.3344] as [number, number],
     travelers: ["K", "A"],
-    isCurrent: true,
-  },
-  {
-    date: "January 23-January 25, 2026",
-    location: "Moon River Ranch",
-    country: "Texas",
-    coordinates: [29.9511, -98.7307] as [number, number],
-    travelers: ["K", "A"],
   },
   {
     date: "January 18-May 25, 2026",
@@ -134,6 +126,7 @@ const travel2026Entries = [
     country: "Mexico",
     coordinates: [19.4326, -99.1332] as [number, number],
     travelers: ["K", "A"],
+    isCurrent: true,
   },
   {
     date: "June 2026",
