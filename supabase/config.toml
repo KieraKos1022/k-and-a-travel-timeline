@@ -1,7 +1,0 @@
-project_id = "uscagdpxrfhdmjexagtj"
-
-[functions.verify-password]
-verify_jwt = false
-
-[functions.validate-session]
-verify_jwt = false
