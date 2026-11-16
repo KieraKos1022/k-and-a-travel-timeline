@@ -161,7 +161,6 @@ const travel2026Entries = [
     country: "Oregon",
     coordinates: [44.0521, -123.0868] as [number, number],
     travelers: ["K", "A"],
-    isCurrent: true,
   },
   {
     date: "Mid September 2026",
@@ -190,6 +189,7 @@ const travel2026Entries = [
     country: "Mexico",
     coordinates: [19.4326, -99.1332] as [number, number],
     travelers: ["K", "A"],
+    isCurrent: true,
   },
   {
     date: "Mid November-Thanksgiving 2026",
@@ -199,14 +199,14 @@ const travel2026Entries = [
     travelers: ["K", "A"],
   },
   {
-    date: "After Thanksgiving-Early December 2026",
+    date: "December 4-14, 2026",
     location: "Hyderabad",
     country: "India",
     coordinates: [17.3850, 78.4867] as [number, number],
     travelers: ["K", "A"],
   },
   {
-    date: "Mid December-End of December 2026",
+    date: "December 16, 2026-January 4, 2027",
     location: "San Diego",
     country: "California",
     coordinates: [32.7157, -117.1611] as [number, number],
